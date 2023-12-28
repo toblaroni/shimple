@@ -2,6 +2,7 @@
 #define SHIMPLE_H
 
 #include <string>
+#include <vector>
 
 class Shimple {
 public:
@@ -9,7 +10,8 @@ public:
     void shi_loop();
 
 private:
-    string shi_get_line();
+    std::string shi_get_line();
+    std::vector<std::string> shi_split_line(std::string line);
 };
 
 #endif // SHIMPLE_H
