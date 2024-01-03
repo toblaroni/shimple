@@ -15,7 +15,7 @@ Shimple::Shimple() {
 void Shimple::shi_loop() {
     string line;
     vector <string> args;
-    // int status = 1;
+    int status;
 
     do {
         cout << "SHIMPLE >> ";
@@ -24,8 +24,9 @@ void Shimple::shi_loop() {
         if (line.empty()) continue;
 
         args = shi_split_line(line);
+        status = shi_execute(args);
 
-    } while (1);
+    } while (status);
 }
 
 string Shimple::shi_get_line() {
@@ -57,6 +58,11 @@ vector<string> Shimple::shi_split_line(string line) {
     }
 
     return args;
+}
+
+
+int Shimple::shi_execute(std::vector<std::string>) {
+    return 1;
 }
 
 

@@ -12,6 +12,7 @@ public:
 private:
     std::string shi_get_line();
     std::vector<std::string> shi_split_line(std::string line);
+    int shi_execute(std::vector<std::string>);
 };
 
 #endif // SHIMPLE_H
