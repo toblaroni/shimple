@@ -1,7 +1,7 @@
 #ifndef SHIMPLE_H
 #define SHIMPLE_H
 
-#include <string>
+#include <string.h>
 #include <vector>
 
 class Shimple {
