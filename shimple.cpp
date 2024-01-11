@@ -1,5 +1,7 @@
 #include <iostream>
+#include <unistd.h>
 #include "shimple.h"
+#include <sys/wait.h>
 
 using namespace std;
 
@@ -12,7 +14,7 @@ Shimple::Shimple() {
     #endif
 }
 
-void Shimple::shi_loop() {
+void Shimple::shi_start() {
     string line;
     vector <string> args;
     int status;
@@ -61,7 +63,46 @@ vector<string> Shimple::shi_split_line(string line) {
 }
 
 
-int Shimple::shi_execute(std::vector<std::string>) {
+int Shimple::shi_launch(vector<string> args) {
+    pid_t pid, wpid;
+    int status;
+
+    // Convert args to a char**
+    char **cArgs = new char*[args.size() + 1];  // +1 for null terminator
+
+    for (int i = 0; i < args.size(); i++) {
+        cArgs[i] = new char[args[i].size() + 1];   // +1 for null terminator
+        strcpy(cArgs[i], args[i].c_str());
+    }
+
+    cArgs[args.size()] = NULL;
+
+    pid = fork();
+    if (pid == 0) {
+        // Child process
+        if (execvp(cArgs[0], cArgs) == -1) {
+            // If it returns you know something has gone wrong...
+            cerr << "Error occurred while executing: " << cArgs[0] << endl;
+            exit(-1);
+        }
+    } else if (pid < 0) {
+        // Error forking
+        cerr << "SHIMPLE" << endl;
+    } else {
+        // Parent process
+        do {
+            // Use waitpid to wait until the child process has either exited or killed.
+            // Remember that pid is the process id of the child process.
+            wpid = waitpid(pid, &status, WUNTRACED);
+        } while (!WIFEXITED(status) && !WIFSIGNALED(status));
+    }
+
+    return 1;
+}
+
+
+int Shimple::shi_execute(std::vector<std::string> args) {
+    
     return 1;
 }
 
@@ -69,7 +110,7 @@ int Shimple::shi_execute(std::vector<std::string>) {
 int main(void) {
     Shimple sh;
 
-    sh.shi_loop();
+    sh.shi_start();
 
     return 0;
 }
