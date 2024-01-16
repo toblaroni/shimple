@@ -42,7 +42,7 @@ string Shimple::shi_get_line() {
         exit(0);
     } else if (cin.fail() || cin.bad()) {
         cout << "Error occurred while reading input...\n";
-        exit(-1);
+        exit(SHI_EXIT_BAD_INPUT);
     } 
 
     return "";
@@ -83,7 +83,7 @@ int Shimple::shi_launch(vector<string> args) {
         if (execvp(cArgs[0], cArgs) == -1) {
             // If it returns you know something has gone wrong...
             cerr << "Error occurred while executing: " << cArgs[0] << endl;
-            exit(-1);
+            exit(SHI_EXIT_BAD_EXECUTION);
         }
     } else if (pid < 0) {
         // Error forking
@@ -96,6 +96,12 @@ int Shimple::shi_launch(vector<string> args) {
             wpid = waitpid(pid, &status, WUNTRACED);
         } while (!WIFEXITED(status) && !WIFSIGNALED(status));
     }
+
+    for (int i = 0; i < args.size(); i++) {
+        delete[] cArgs[i];
+    }
+
+    delete[] cArgs;
 
     return 1;
 }
