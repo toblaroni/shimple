@@ -14,13 +14,52 @@ Shimple::Shimple() {
     #endif
 }
 
+
+// ******* builtin function definitions *******
+
+int Shimple::shi_num_builtins() {
+    return builtin_str.size();
+}
+
+
+int Shimple::shi_cd(vector<string> args) {
+    if (args[1].c_str() == nullptr) {
+        fprintf(stderr, "Error: Expected argument to \"cd\"\n");
+    } else {
+        if (chdir(args[1].c_str()) != 0) {
+            perror("SHIMPLE");
+        }
+    }
+    return 1;
+}
+
+
+int Shimple::shi_help(vector<string> args) {
+    printf("Welcome to Shimple Shell\n");
+    printf("Shimple Shell shall s(h)erve as your shell\n");
+    printf("Thes(h)e are the builtin functions(h):\n");
+
+    for (int i = 0; i < shi_num_builtins(); i++) {
+        printf("\t%s\n", builtin_str[i].c_str());
+    }
+
+    return 1;
+}
+
+
+int Shimple::shi_exit(vector<string> args) {
+    return 0; 
+}
+
+// **************
+
 void Shimple::shi_start() {
     string line;
     vector <string> args;
     int status;
 
     do {
-        cout << "SHIMPLE >> ";
+        printf("8==D ");
 
         line = shi_get_line();
         if (line.empty()) continue;
@@ -54,7 +93,6 @@ vector<string> Shimple::shi_split_line(string line) {
     char *tok = strtok(const_cast<char*>(line.c_str()), " ");
 
     while (tok != nullptr) {
-        cout << tok << endl;
         args.push_back(string(tok));
         tok = strtok(nullptr, " ");  // Nullptr
     }
@@ -82,7 +120,7 @@ int Shimple::shi_launch(vector<string> args) {
         // Child process
         if (execvp(cArgs[0], cArgs) == -1) {
             // If it returns you know something has gone wrong...
-            cerr << "Error occurred while executing: " << cArgs[0] << endl;
+            cerr << "Error (child) occurred while executing: " << cArgs[0] << endl;
             exit(SHI_EXIT_BAD_EXECUTION);
         }
     } else if (pid < 0) {
@@ -108,8 +146,17 @@ int Shimple::shi_launch(vector<string> args) {
 
 
 int Shimple::shi_execute(std::vector<std::string> args) {
-    
-    return 1;
+    if (args.size() == 0)
+        return 1;  // Empty string double check
+
+    for (int i = 0; i < shi_num_builtins(); i++) {
+        printf("%s\n", builtin_str[i].c_str());
+        if (args[i] == builtin_str[i]) {
+            return (this->*builtin_func[i])(args);
+        }
+    }
+
+    return shi_launch(args);
 }
 
 
