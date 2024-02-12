@@ -59,7 +59,7 @@ void Shimple::shi_start() {
     int status;
 
     do {
-        printf("8==D ");
+        printf("8==D -- ");
 
         line = shi_get_line();
         if (line.empty()) continue;
@@ -150,8 +150,7 @@ int Shimple::shi_execute(std::vector<std::string> args) {
         return 1;  // Empty string double check
 
     for (int i = 0; i < shi_num_builtins(); i++) {
-        printf("%s\n", builtin_str[i].c_str());
-        if (args[i] == builtin_str[i]) {
+        if (args[0] == builtin_str[i]) {
             return (this->*builtin_func[i])(args);
         }
     }
